@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tetris with Linked List</title>
+
+    <!-- PyScript to run Python in browser -->
+    <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
+    <script defer src="https://pyscript.net/latest/pyscript.js"></script>
+
+    <link rel="stylesheet" href="styles.css" />
+    <py-config></py-config>
+  </head>
+  <body>
+    <header>
+      <h1>🎮 Tetris with Linked List</h1>
+      <p>Blocks are stored and managed using a <b>Linked List</b>.</p>
+    </header>
+
+    <main class="grid">
+      <section class="panel">
+        <canvas id="game" width="300" height="600"></canvas>
+      </section>
+
+      <section class="panel info">
+        <div class="card">
+          <h2>Score: <span id="score">0</span></h2>
+          <p>Next: <span id="nextName">?</span></p>
+          <div id="nextPreview" class="preview"></div>
+        </div>
+
+        <div class="card">
+          <h3>Controls</h3>
+          <ul>
+            <li>◀︎ / ▶︎ — move</li>
+            <li>▲ — rotate</li>
+            <li>▼ — drop</li>
+            <li>Space — pause</li>
+          </ul>
+        </div>
+      </section>
+    </main>
+
+    <footer>Made in Python with PyScript • Linked List Tetris</footer>
+
+    <py-script src="game.py"></py-script>
+  </body>
+</html>
