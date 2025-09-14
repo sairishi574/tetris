@@ -21,6 +21,10 @@
     <main class="grid">
       <section class="panel">
         <canvas id="game" width="300" height="600"></canvas>
+        <!-- Start Game Button -->
+        <div style="margin-top: 10px; text-align: center;">
+          <button id="startBtn" py-click="start_game">▶ Start Game</button>
+        </div>
       </section>
 
       <section class="panel info">
@@ -44,6 +48,7 @@
 
     <footer>Made in Python with PyScript • Linked List Tetris</footer>
 
+    <!-- Load Python game logic -->
     <py-script src="game.py"></py-script>
   </body>
 </html>
