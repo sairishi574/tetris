@@ -2,9 +2,7 @@ import asyncio, random
 from js import document
 from pyodide.ffi import create_proxy
 
-# -------------------------
 # Linked List Implementation
-# -------------------------
 class Node:
     def __init__(self, value):
         self.value = value
@@ -26,8 +24,7 @@ class LinkedList:
         self._size += 1
 
     def popleft(self):
-        if not self.head:
-            return None
+        if not self.head: return None
         v = self.head.value
         self.head = self.head.next
         if not self.head:
@@ -54,9 +51,8 @@ class LinkedList:
     def __len__(self):
         return self._size
 
-# -------------------------
-# Game Setup
-# -------------------------
+
+# Setup canvas
 canvas = document.getElementById("game")
 ctx = canvas.getContext("2d")
 COLS, ROWS = 10, 20
@@ -81,6 +77,7 @@ SHAPES = {
     "L": [(2,0),(0,1),(1,1),(2,1)],
 }
 
+# Globals
 board = [[None for _ in range(COLS)] for _ in range(ROWS)]
 current = LinkedList()
 current_name = None
@@ -89,12 +86,9 @@ pivot = (0,0)
 queue = LinkedList()
 score = 0
 game_running = False
-game_task = None
 paused = False
+game_task = None
 
-# -------------------------
-# Core Functions
-# -------------------------
 def bag7():
     names = list(SHAPES.keys())
     random.shuffle(names)
@@ -151,7 +145,6 @@ def lock_piece():
     for (x,y) in current:
         if 0 <= y < ROWS:
             board[y][x] = current_color
-    # TODO: line clearing
     spawn_new()
 
 def draw_cell(x, y, color):
@@ -177,9 +170,7 @@ async def game_loop():
             draw()
         await asyncio.sleep(0.5)
 
-# -------------------------
-# Public Start Function (Button Hook)
-# -------------------------
+# --- NEW: Start Game Button Handler ---
 def start_game(event=None):
     global board, queue, score, game_running, game_task, paused
     # Reset everything
@@ -193,27 +184,5 @@ def start_game(event=None):
     spawn_new()
     draw()
 
-    # start async loop
+    # Start async loop
     game_task = asyncio.create_task(game_loop())
-
-# -------------------------
-# Keyboard Controls
-# -------------------------
-def key_handler(event):
-    global paused
-    key = event.key
-    if not game_running:
-        return
-    if key == "ArrowLeft":
-        move(-1, 0)
-    elif key == "ArrowRight":
-        move(1, 0)
-    elif key == "ArrowDown":
-        move(0, 1)
-    elif key == "ArrowUp":
-        rotate()
-    elif key == " ":
-        paused = not paused  # toggle pause
-    draw()
-
-document.addEventListener("keydown", create_proxy(key_handler))
