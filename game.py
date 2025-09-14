@@ -2,7 +2,9 @@ import asyncio, random
 from js import document
 from pyodide.ffi import create_proxy
 
+# -------------------------
 # Linked List Implementation
+# -------------------------
 class Node:
     def __init__(self, value):
         self.value = value
@@ -24,7 +26,8 @@ class LinkedList:
         self._size += 1
 
     def popleft(self):
-        if not self.head: return None
+        if not self.head: 
+            return None
         v = self.head.value
         self.head = self.head.next
         if not self.head:
@@ -51,7 +54,9 @@ class LinkedList:
     def __len__(self):
         return self._size
 
-# Setup canvas
+# -------------------------
+# Game Setup
+# -------------------------
 canvas = document.getElementById("game")
 ctx = canvas.getContext("2d")
 COLS, ROWS = 10, 20
@@ -83,7 +88,11 @@ current_color = None
 pivot = (0,0)
 queue = LinkedList()
 score = 0
+game_running = False
 
+# -------------------------
+# Core Functions
+# -------------------------
 def bag7():
     names = list(SHAPES.keys())
     random.shuffle(names)
@@ -157,15 +166,30 @@ def draw():
         if y>=0: draw_cell(x,y,current_color)
 
 async def game_loop():
-    while True:
+    global game_running
+    while game_running:
         if not move(0,1):
             lock_piece()
         draw()
         await asyncio.sleep(0.5)
 
-def start():
+# -------------------------
+# Public Start Function (Button Hook)
+# -------------------------
+def start_game(event=None):
+    global board, queue, score, game_running
+    # Reset everything
+    board = [[None for _ in range(COLS)] for _ in range(ROWS)]
+    queue.clear()
+    score = 0
+    document.getElementById("score").innerText = "0"
+    game_running = True
+
     spawn_new()
     draw()
     asyncio.ensure_future(game_loop())
 
-start()
+# -------------------------
+# REMOVE auto start
+# -------------------------
+# start()   <-- deleted
