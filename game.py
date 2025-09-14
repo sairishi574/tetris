@@ -26,7 +26,7 @@ class LinkedList:
         self._size += 1
 
     def popleft(self):
-        if not self.head: 
+        if not self.head:
             return None
         v = self.head.value
         self.head = self.head.next
@@ -89,6 +89,8 @@ pivot = (0,0)
 queue = LinkedList()
 score = 0
 game_running = False
+game_task = None
+paused = False
 
 # -------------------------
 # Core Functions
@@ -149,6 +151,7 @@ def lock_piece():
     for (x,y) in current:
         if 0 <= y < ROWS:
             board[y][x] = current_color
+    # TODO: line clearing
     spawn_new()
 
 def draw_cell(x, y, color):
@@ -168,28 +171,49 @@ def draw():
 async def game_loop():
     global game_running
     while game_running:
-        if not move(0,1):
-            lock_piece()
-        draw()
+        if not paused:
+            if not move(0,1):
+                lock_piece()
+            draw()
         await asyncio.sleep(0.5)
 
 # -------------------------
 # Public Start Function (Button Hook)
 # -------------------------
 def start_game(event=None):
-    global board, queue, score, game_running
+    global board, queue, score, game_running, game_task, paused
     # Reset everything
     board = [[None for _ in range(COLS)] for _ in range(ROWS)]
     queue.clear()
     score = 0
+    paused = False
     document.getElementById("score").innerText = "0"
     game_running = True
 
     spawn_new()
     draw()
-    asyncio.ensure_future(game_loop())
+
+    # start async loop
+    game_task = asyncio.create_task(game_loop())
 
 # -------------------------
-# REMOVE auto start
+# Keyboard Controls
 # -------------------------
-# start()   <-- deleted
+def key_handler(event):
+    global paused
+    key = event.key
+    if not game_running:
+        return
+    if key == "ArrowLeft":
+        move(-1, 0)
+    elif key == "ArrowRight":
+        move(1, 0)
+    elif key == "ArrowDown":
+        move(0, 1)
+    elif key == "ArrowUp":
+        rotate()
+    elif key == " ":
+        paused = not paused  # toggle pause
+    draw()
+
+document.addEventListener("keydown", create_proxy(key_handler))
